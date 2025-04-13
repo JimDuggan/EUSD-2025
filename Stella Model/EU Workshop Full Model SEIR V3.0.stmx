@@ -1,0 +1,2013 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xmile version="1.0" xmlns="http://docs.oasis-open.org/xmile/ns/XMILE/v1.0" xmlns:isee="http://iseesystems.com/XMILE">
+	<header>
+		<smile version="1.0" namespace="std, isee" uses_submodels=""/>
+		<name>EU Workshop Full Model SEIR V3.0</name>
+		<uuid>ed951ed2-2417-47d6-b8aa-ccf3cb0548e4</uuid>
+		<vendor>isee systems, inc.</vendor>
+		<product version="3.8" isee:build_number="3578" isee:saved_by_v1="true" lang="en">Stella Architect</product>
+	</header>
+	<sim_specs isee:sim_duration="0" isee:run_prefix="Run" isee:simulation_delay="0" isee:restore_on_start="false" method="Euler" time_units="Days" isee:instantaneous_flows="false" isee:ignore_module_errors="false" isee:strict_units="true" isee:loop_scores="true" isee:loop_exhaustive_allowed="1000">
+		<start>0</start>
+		<stop>200</stop>
+		<dt reciprocal="true">32</dt>
+	</sim_specs>
+	<isee:prefs saved_runs="5" keep="false" show_module_prefix="true" live_update_on_drag="true" show_restore_buttons="false" layer="model" isee:design="Deluxe Prev-Next Blue Green Pastel" isee:design_custom="false" interface_scale_ui="true" interface_max_page_width="10000" interface_max_page_height="10000" interface_min_page_width="0" interface_min_page_height="0" rerun_on_structure_change="false" rifp="true"/>
+	<isee:multiplayer_settings include_chat="true" allow_observers="false" advance_time_increment="1" max_advance_time_in_ms="0" model_stops_when_players_drop="false" observer_start_page="home_page" enabled="false"/>
+	<isee:time_formats default_format="Builtin">
+		<isee:time_format name="Builtin" type="adaptive"/>
+	</isee:time_formats>
+	<isee:number_format_extenders/>
+	<default_format/>
+	<data>
+		<export enabled="false" frequency="on_demand" resource="r../Sensitivity Data.xlsx" type="Excel" worksheet="Sheet1" precomputed="false" isee:format="numbers">
+			<table name="Sensitivity Data" use_settings="true"/>
+		</export>
+		<export frequency="on_demand" resource="r../SENS_Data_CSV.csv" precomputed="false" isee:format="numbers">
+			<table name="Sensitivity Data" use_settings="true"/>
+		</export>
+	</data>
+	<isee:sensi_specs_list active_index="0">
+		<isee:sensi_specs name="Sensitivity" method="latin_hypercube" runs="1000">
+			<isee:variable type="adhoc" name="Regular_Care.Activate_B1_Overtime">0,1</isee:variable>
+			<isee:variable type="adhoc" name="Regular_Care.Activate_R1_Burnout">0,1</isee:variable>
+			<isee:variable type="adhoc" name='Regular_Care."Activate_B1.1_Duty_of_Care"'>0,1</isee:variable>
+			<isee:variable type="adhoc" name="Regular_Care.Activate_B2_Digital_Health">0,1</isee:variable>
+			<isee:variable type="adhoc" name="Regular_Care.Activate_R2_Telemedicine_Rework">0,1</isee:variable>
+			<isee:variable type="adhoc" name="Regular_Care.Activate_B3_Surge_Resources">0,1</isee:variable>
+			<isee:variable type="adhoc" name='Regular_Care."Activate_R3_Sub-Optimal_Consultations"'>0,1</isee:variable>
+			<isee:variable type="adhoc" name='SEIR."Activate_B1.2_Aware_Citizens"'>0,1</isee:variable>
+			<isee:variable type="adhoc" name='SEIR."Activate_B1.1_Vaccination"'>0,1</isee:variable>
+			<isee:variable type="uniform" min="0.5" max="1" seed="12345" name="SEIR.PAR_ALPHA" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="0.1" name="SEIR.PAR_GAMMA" num_samples="5"/>
+			<isee:variable type="uniform" min="1" max="10" name="Regular_Care.Fatigue_Onset_Time" num_samples="5"/>
+			<isee:variable type="uniform" min="1" max="10" name="Regular_Care.Fatigue_Reporting_Delay" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="0.5" name="Regular_Care.Max_Digital_Health_Fraction" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="1" name="Regular_Care.AF_Digital_Health" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="0.75" name="Regular_Care.Maximum_Telemedicine_Effectiveness" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="0.2" name="Regular_Care.Minimum_Telemedicine_Effectiveness" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="1" name="Regular_Care.AF_TME" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="0.5" name="Regular_Care.Maximum_Surge_Capacity_Fraction" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="1" name="Regular_Care.AF_Labour" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="0.3" name="Regular_Care.Minimum_Preparedness_Proportion" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="0.9" name="Regular_Care.Maximum_Preparedness_Proportion" num_samples="5"/>
+			<isee:variable type="uniform" min="0" max="1" name="Regular_Care.AF_Preparedness" num_samples="5"/>
+		</isee:sensi_specs>
+	</isee:sensi_specs_list>
+	<isee:optimizer_specs_list active_index="0">
+		<isee:optimizer_specs name="Optimization" method="Powell" use_additional_starts_file="false" additional_starts="0" report_interval="1" confidence_range="0"/>
+	</isee:optimizer_specs_list>
+	<isee:payoff_specs_list>
+		<isee:payoff_specs name="Payoff"/>
+	</isee:payoff_specs_list>
+	<model_units/>
+	<model>
+		<variables>
+			<module name="Regular Care" isee:label="">
+				<connect to="Regular_Care.Pandemic_Demand" from="SEIR.Output_Primary_Care_Demand"/>
+				<connect2 to="Regular_Care.Pandemic_Demand" from="SEIR.Output_Primary_Care_Demand"/>
+			</module>
+			<module name="SEIR" isee:label="">
+				<connect to="Regular_Care.Pandemic_Demand" from="SEIR.Output_Primary_Care_Demand"/>
+				<connect2 to="Regular_Care.Pandemic_Demand" from="SEIR.Output_Primary_Care_Demand"/>
+			</module>
+		</variables>
+		<views>
+			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+				<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:loop_indicator color="black" background="white" vertical_text_align="top" font_size="12pt"/>
+				<numeric_display color="white" background="white" font_size="12pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+				<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+					<isee:series_styles>
+						<isee:series_style color="blue" thickness="1"/>
+						<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF7F00" thickness="1"/>
+						<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF007F" thickness="1"/>
+						<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#C8C8C8" thickness="1"/>
+					</isee:series_styles>
+				</graph>
+				<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				<button color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595"/>
+				<isee:annotation color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595" popup_corner_radius="0" popup_background_color="#FFFECF"/>
+				<slider color="#66CC66" background="#E0E0E0" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" vertical="false" isee:fancy_appearance="false" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:stacked_container color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" padding="6 8" border_color="#999999" border_width="thin" border_style="solid" item_spacing="0" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				<isee:dual_slider color="#66CC66" background="silver" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:sim_speed_slider color="black" background="white"/>
+				<isee:time_slider color="#E95F74" background="silver"/>
+				<isee:pie_input color="black" background="white" font_size="12pt" legend_position="bottom" isee:transparent="false"/>
+				<knob color="#66CC66" background="#E0E0E0" font_size="12pt" label_side="bottom" wrap_title="true"/>
+				<numeric_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<isee:dropdown_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<switch color="black" background="#E0E0E0" font_size="12pt" label_side="top" wrap_title="true" isee:appearance="switch" isee:on_color="green"/>
+				<options color="black" background="white" appearance="radio-buttons" arrangement="vertical"/>
+				<graphical_input color="black" background="#E0E0E0" font_size="12pt" isee:show_hover_tip="true"/>
+				<group_input color="black" background="#E0E0E0" font_size="12pt"/>
+				<lamp color="black" background="white" font_size="9pt"/>
+				<gauge color="black" background="white" font_size="9pt" needle_color="#F09F72" bar_color="#EEEEEE" bar_progress_color="black" appearance="radial" num_major_ticks="11" num_minor_ticks="1" show_numeric_value="true"/>
+				<isee:spatial_map color="black" background="white" font_size="12pt"/>
+				<isee:animation_object color="black" background="white" font_size="12pt"/>
+				<isee:navigation_widget color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" padding="6 8" border_color="#999999" border_width="thin" border_style="solid" item_spacing="6" appearance="tabs" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				<isee:shape color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid" opacity="1" transparent_background="true" corner_radius="1"/>
+				<isee:selector color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
+				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" hide_border="false" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+			</style>
+			<view isee:show_pages="false" background="white" page_width="822" page_height="575" isee:page_cols="2" isee:page_rows="2" zoom="120" isee:popup_graphs_are_comparative="true" isee:enable_non_negative_highlights="false" type="stock_flow">
+				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="45" height="35"/>
+					</stock>
+					<flow color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</flow>
+					<isee:placeholder color="#228B22" background="white" font_color="#228B22" font_size="9pt" label_side="bottom"/>
+					<module color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="55" height="45"/>
+					</module>
+					<aux color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</aux>
+					<group color="red" background="white" font_color="red" font_size="9pt"/>
+					<connector color="#FF007F" background="white" font_color="#FF007F" font_size="9pt" isee:thickness="1"/>
+					<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<isee:loop_indicator color="black" background="white" vertical_text_align="top" font_size="12pt"/>
+					<numeric_display color="white" background="white" font_size="12pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+					<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+						<isee:series_styles>
+							<isee:series_style color="blue" thickness="1"/>
+							<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF7F00" thickness="1"/>
+							<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF007F" thickness="1"/>
+							<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#C8C8C8" thickness="1"/>
+						</isee:series_styles>
+					</graph>
+					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				</style>
+				<module label_side="center" x="612.833" y="262.834" width="77.5" height="65" name="Regular Care"/>
+				<module label_side="center" x="347.167" y="263.25" width="86.6667" height="64.1667" name="SEIR"/>
+				<connector uid="1" isee:thickness="2" angle="16.5892">
+					<from>SEIR</from>
+					<to>Regular_Care</to>
+				</connector>
+				<stacked_container uid="2" x="492.416" y="424.167" width="698.333" height="362.5" minimized="true">
+					<table orientation="vertical" interval="1" report_balances="beginning" report_flows="instantaneous" width="698.333" height="362.5" comparative="true" isee:export_name="Sensitivity Data" isee:mark_for_export="true" title="Sensitivity">
+						<item type="time"/>
+						<item>
+							<entity name="Regular_Care.Regular_Care_Backlog"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.RMSE"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Activate_B1_Overtime"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Activate_R1_Burnout"/>
+						</item>
+						<item>
+							<entity name='Regular_Care."Activate_B1.1_Duty_of_Care"'/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Activate_B2_Digital_Health"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Activate_R2_Telemedicine_Rework"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Activate_B3_Surge_Resources"/>
+						</item>
+						<item>
+							<entity name='Regular_Care."Activate_R3_Sub-Optimal_Consultations"'/>
+						</item>
+						<item>
+							<entity name='SEIR."Activate_B1.2_Aware_Citizens"'/>
+						</item>
+						<item>
+							<entity name='SEIR."Activate_B1.1_Vaccination"'/>
+						</item>
+						<item>
+							<entity name="SEIR.PAR_ALPHA"/>
+						</item>
+						<item>
+							<entity name="SEIR.PAR_GAMMA"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Fatigue_Onset_Time"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Fatigue_Reporting_Delay"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Max_Digital_Health_Fraction"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.AF_Digital_Health"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Maximum_Telemedicine_Effectiveness"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Minimum_Telemedicine_Effectiveness"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.AF_TME"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Maximum_Surge_Capacity_Fraction"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.AF_Labour"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Minimum_Preparedness_Proportion"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.Maximum_Preparedness_Proportion"/>
+						</item>
+						<item>
+							<entity name="Regular_Care.AF_Preparedness"/>
+						</item>
+					</table>
+				</stacked_container>
+				<stacked_container uid="3" x="377.5" y="137" width="560.833" height="355" minimized="true" name="Backlog">
+					<graph width="560.833" height="355" comparative="true" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" title="Line Graph" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Regular_Care.Regular_Care_Backlog"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<stacked_container uid="5" x="518.416" y="83.6667" width="519.166" height="309.167" minimized="true" name="RMSE">
+					<graph width="519.166" height="309.167" comparative="true" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" title="Line Graph" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Regular_Care.RMSE"/>
+						</plot>
+					</graph>
+				</stacked_container>
+			</view>
+		</views>
+	</model>
+	<model name="Regular_Care">
+		<variables>
+			<stock name="Regular Care\nBacklog">
+				<eqn>10</eqn>
+				<inflow>Consultations</inflow>
+				<inflow>Repeat_Consultations</inflow>
+				<outflow>Consultations_Completed</outflow>
+				<outflow>Transfers_to_Telemedicine</outflow>
+				<units>People</units>
+			</stock>
+			<flow name="Consultations">
+				<eqn>Regular_Care_Demand+Pandemic_Demand</eqn>
+				<non_negative/>
+				<units>People/Days</units>
+			</flow>
+			<flow name="Consultations Completed">
+				<eqn>MIN(Desired_Consultations_Completed*Quality_Fraction, Potential_Consultations_Completed*Quality_Fraction)</eqn>
+				<non_negative/>
+				<units>People/Days</units>
+			</flow>
+			<flow name="Repeat\nConsultations">
+				<eqn>Future_Readmission_Cases/Readmission_Delay</eqn>
+				<non_negative/>
+				<units>People/Days</units>
+			</flow>
+			<aux name="Desired\nConsultations\nCompleted">
+				<eqn>Regular_Care_Backlog/Standard_Delay_in_Days</eqn>
+				<units>People/Days</units>
+			</aux>
+			<aux name="Standard Workday">
+				<eqn>10</eqn>
+				<units>Days</units>
+			</aux>
+			<aux name="Standard Completion Rate">
+				<eqn>Net_Labour*Standard_Workday/Standard_Time_in_Hours</eqn>
+				<units>People/Days</units>
+			</aux>
+			<aux name="Net Labour">
+				<eqn>Fixed_Labour+Surge_Labour</eqn>
+				<units>People</units>
+			</aux>
+			<aux name="Schedule\nPressure">
+				<eqn>Desired_Consultations_Completed/Standard_Completion_Rate</eqn>
+				<units>Dimensionless</units>
+			</aux>
+			<aux name="Workday">
+				<eqn>Effect_of_Schedule_Pressure_on_Workday*Standard_Workday*Effect_of_Reported_Fatigue_on_Workday</eqn>
+				<units>Hours</units>
+			</aux>
+			<aux name="B1 Effect of Schedule\nPressure on Workday">
+				<eqn>Schedule_Pressure</eqn>
+				<gf>
+					<xscale min="0" max="2.5"/>
+					<yscale min="0" max="2"/>
+					<ypts>0.75,0.79,0.84,0.9,1,1.09,1.17,1.23,1.25,1.25,1.25</ypts>
+				</gf>
+				<units>Dimensionless</units>
+			</aux>
+			<aux name="Potential\nConsultations\nCompleted">
+				<eqn>Effect_of_Fatigue_on_Productivity*Net_Labour*Workday/Standard_Time_in_Hours</eqn>
+				<units>People/Days</units>
+			</aux>
+			<aux name="Standard Time in Hours">
+				<eqn>1</eqn>
+				<units>Days</units>
+			</aux>
+			<aux name="Standard Delay in Days">
+				<eqn>Standard_Time_in_Hours/Standard_Workday</eqn>
+				<units>Days</units>
+			</aux>
+			<aux name="Average Delay Time">
+				<eqn>Regular_Care_Backlog/Consultations_Completed</eqn>
+				<units>Days</units>
+			</aux>
+			<aux name="Effect of Schedule\nPressure on Workday">
+				<eqn>IF Activate_B1_Overtime = 1 THEN B1_Effect_of_Schedule_Pressure_on_Workday ELSE 1</eqn>
+				<units>Dimensionless</units>
+			</aux>
+			<aux name="Activate B1\nOvertime">
+				<eqn>0</eqn>
+				<units>Dimensionless</units>
+			</aux>
+			<aux name="Recent Workday">
+				<eqn>SMTH3(Workday, Fatigue_Onset_Time)</eqn>
+			</aux>
+			<aux name="Fatigue Onset Time">
+				<eqn>5</eqn>
+			</aux>
+			<aux name="R1 Effect of Fatigue on Productivity">
+				<eqn>Recent_Workday</eqn>
+				<gf>
+					<xscale min="0" max="22"/>
+					<yscale min="0" max="2"/>
+					<ypts>1.1,1.1,1.1,1.1,1.07,1,0.9,0.7,0.4,0.15,0.07,0</ypts>
+				</gf>
+			</aux>
+			<aux name="Activate R1\nBurnout">
+				<eqn>0</eqn>
+			</aux>
+			<aux name="Effect of Fatigue on Productivity">
+				<eqn>IF Activate_R1_Burnout = 1 THEN R1_Effect_of_Fatigue_on_Productivity ELSE 1</eqn>
+			</aux>
+			<aux name="Fatigue Reporting Delay">
+				<eqn>2</eqn>
+			</aux>
+			<aux name="B1.1 Effect of Reported Fatigue on Workday">
+				<eqn>Reported_Effects_of_Fatigue_on_Productivity</eqn>
+			</aux>
+			<aux name="Effect of Reported\nFatigue on Workday">
+				<eqn>IF &quot;Activate_B1.1_Duty_of_Care&quot; = 1 THEN &quot;B1.1_Effect_of_Reported_Fatigue_on_Workday&quot; ELSE 1</eqn>
+			</aux>
+			<aux name="Activate B1.1\nDuty of Care">
+				<eqn>0</eqn>
+			</aux>
+			<stock name="Reported\nEffects of\nFatigue on\nProductivity">
+				<eqn>1</eqn>
+				<inflow>CREFOP</inflow>
+			</stock>
+			<flow name="CREFOP">
+				<eqn>(Effect_of_Fatigue_on_Productivity-Reported_Effects_of_Fatigue_on_Productivity)/Fatigue_Reporting_Delay</eqn>
+			</flow>
+			<aux name="Fixed Labour">
+				<eqn>10</eqn>
+			</aux>
+			<aux name="Desired Total Labour">
+				<eqn>Desired_Consultations_Completed/Standard_Daily_Productivty</eqn>
+			</aux>
+			<aux name="Standard Daily Productivty">
+				<eqn>Standard_Workday/Standard_Time_in_Hours</eqn>
+			</aux>
+			<aux name="Desired Surge Labour">
+				<eqn>MAX(0, Desired_Total_Labour-Fixed_Labour)</eqn>
+			</aux>
+			<stock name="Surge\nLabour">
+				<eqn>0</eqn>
+				<inflow>CSL</inflow>
+				<units>People</units>
+			</stock>
+			<flow name="CSL">
+				<eqn>Activate_B3_Surge_Resources*(Constrained_Surge_Labour-Surge_Labour)*AF_Labour</eqn>
+				<units>People/Days</units>
+			</flow>
+			<aux name="AF Labour">
+				<eqn>.5</eqn>
+			</aux>
+			<aux name="Activate B3\nSurge Resources">
+				<eqn>0</eqn>
+			</aux>
+			<stock name="Surge\nPreparedness\nProportion">
+				<eqn>Minimum_Preparedness_Proportion</eqn>
+				<inflow>CSPP</inflow>
+			</stock>
+			<aux name="Maximum\nPreparedness\nProportion">
+				<eqn>1</eqn>
+			</aux>
+			<aux name="AF Preparedness">
+				<eqn>1</eqn>
+			</aux>
+			<aux name="Minimum\nPreparedness\nProportion">
+				<eqn>0</eqn>
+			</aux>
+			<aux name="Fixed\nLabour\nProportion">
+				<eqn>Fixed_Labour/Net_Labour</eqn>
+			</aux>
+			<aux name="Surge Labour Proportion">
+				<eqn>Surge_Labour/Net_Labour</eqn>
+			</aux>
+			<aux name="Quality Fraction">
+				<eqn>IF &quot;Activate_R3_Sub-Optimal_Consultations&quot; = 1 THEN Fixed_Labour_Proportion*Fixed_Labour_Quality_Fraction+Surge_Labour_Proportion*Surge_Preparedness_Proportion ELSE 1*Fixed_Labour_Quality_Fraction</eqn>
+			</aux>
+			<aux name="Fixed\nLabour\nQuality Fraction">
+				<eqn>1</eqn>
+			</aux>
+			<aux name="Activate R3\nSub-Optimal\nConsultations">
+				<eqn>0</eqn>
+			</aux>
+			<aux name="Regular\nCare\nDemand">
+				<eqn>100</eqn>
+			</aux>
+			<aux name="Pandemic Demand" access="input">
+				<eqn>0</eqn>
+			</aux>
+			<flow name="Transfers to\nTelemedicine">
+				<eqn>Digital_Health_Adoption_Fraction*Activate_B2_Digital_Health*MAX(0, Schedule_Pressure-1)*Regular_Care_Backlog</eqn>
+				<non_negative/>
+				<units>People/Days</units>
+			</flow>
+			<stock name="Future\nReadmission\nCases">
+				<eqn>0</eqn>
+				<inflow>Readmissions</inflow>
+				<inflow>Readmissions_from_Telemedicine</inflow>
+				<outflow>Repeat_Consultations</outflow>
+				<units>People</units>
+			</stock>
+			<flow name="Readmissions">
+				<eqn>MIN(Desired_Consultations_Completed*(1-Quality_Fraction), Potential_Consultations_Completed*(1-Quality_Fraction))</eqn>
+				<non_negative/>
+				<units>People/Days</units>
+			</flow>
+			<aux name="Readmission\nDelay">
+				<eqn>14</eqn>
+				<units>Days</units>
+			</aux>
+			<aux name="Activate B2\nDigital Health">
+				<eqn>0</eqn>
+			</aux>
+			<stock name="Digital\nHealth\nAdoption\nFraction">
+				<eqn>0</eqn>
+				<inflow>IDHF</inflow>
+			</stock>
+			<flow name="IDHF">
+				<eqn>(Max_Digital_Health_Fraction-Digital_Health_Adoption_Fraction)*AF_Digital_Health</eqn>
+			</flow>
+			<aux name="Max Digital Health Fraction">
+				<eqn>1</eqn>
+			</aux>
+			<aux name="AF Digital Health">
+				<eqn>0.3</eqn>
+			</aux>
+			<stock name="Telemedicine\nPatients">
+				<doc>The number of people undergoing telemedicine consultations. This stock receives input via the balancing loop &quot;Digital Health&quot;. It&apos;s output can be either treatments completed (a successful consultation) or Readmissions, where patients need join the backlog again.</doc>
+				<eqn>100</eqn>
+				<inflow>Patients_Transferred</inflow>
+				<outflow>Readmissions_from_Telemedicine</outflow>
+				<outflow>Completed_Telemedicine_Treatment</outflow>
+				<units>People</units>
+			</stock>
+			<flow name="Patients Transferred">
+				<eqn>Transfers_to_Telemedicine</eqn>
+				<non_negative/>
+				<units>People/Days</units>
+			</flow>
+			<flow name="Readmissions\nfrom\nTelemedicine">
+				<eqn>Activate_R2_Telemedicine_Rework*(1-Telemedicine_Effectiveness_Fraction)*DELAY3(Patients_Transferred, Readmission_Delay)</eqn>
+				<non_negative/>
+				<units>People/Days</units>
+			</flow>
+			<flow name="Completed\nTelemedicine\nTreatment">
+				<eqn>Activate_R2_Telemedicine_Rework*Telemedicine_Effectiveness_Fraction*DELAY3(Patients_Transferred, Readmission_Delay)</eqn>
+				<non_negative/>
+				<units>People/Days</units>
+			</flow>
+			<aux name="Activate R2\nTelemedicine\nRework" isee:derived_units="true">
+				<eqn>0</eqn>
+				<units>People/Days</units>
+			</aux>
+			<flow name="CSPP">
+				<eqn>(Maximum_Preparedness_Proportion-Surge_Preparedness_Proportion)*AF_Preparedness</eqn>
+			</flow>
+			<stock name="Telemedicine\nEffectiveness\nFraction">
+				<eqn>Minimum_Telemedicine_Effectiveness</eqn>
+				<inflow>CTE</inflow>
+			</stock>
+			<flow name="CTE">
+				<eqn>(Maximum_Telemedicine_Effectiveness-Telemedicine_Effectiveness_Fraction)*AF_TME</eqn>
+			</flow>
+			<aux name="Maximum Telemedicine Effectiveness">
+				<eqn>.6</eqn>
+			</aux>
+			<aux name="AF TME">
+				<eqn>.2</eqn>
+			</aux>
+			<aux name="Minimum\nTelemedicine\nEffectiveness">
+				<eqn>0.1</eqn>
+			</aux>
+			<stock name="Sum of Squared\nDifference in KPI">
+				<eqn>0</eqn>
+				<inflow>Difference</inflow>
+			</stock>
+			<flow name="Difference">
+				<eqn>IF Average_Delay_Time &gt;= Standard_Delay_in_Days THEN (Standard_Delay_in_Days-Average_Delay_Time)^2 ELSE 0</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="RMSE">
+				<eqn>SQRT(Sum_of_Squared_Difference_in_KPI)</eqn>
+			</aux>
+			<aux name="Maximum Surge Labour">
+				<eqn>Fixed_Labour*(1+Maximum_Surge_Capacity_Fraction)</eqn>
+			</aux>
+			<aux name="Constrained Surge Labour">
+				<eqn>MIN(Maximum_Surge_Labour, Desired_Surge_Labour)</eqn>
+			</aux>
+			<aux name="Maximum Surge Capacity Fraction">
+				<eqn>.20</eqn>
+			</aux>
+			<stock name="Total\nConsultations\nRegular">
+				<eqn>100</eqn>
+				<inflow>ITCR</inflow>
+			</stock>
+			<flow name="ITCR">
+				<eqn>Regular_Care_Demand</eqn>
+				<non_negative/>
+			</flow>
+			<stock name="Total\nConsultations\nPandemic">
+				<eqn>100</eqn>
+				<inflow>ITCP</inflow>
+			</stock>
+			<flow name="ITCP">
+				<eqn>Pandemic_Demand</eqn>
+				<non_negative/>
+			</flow>
+			<stock name="Total\nTransfers to\nTelemedicine">
+				<eqn>100</eqn>
+				<inflow>ITTTM</inflow>
+			</stock>
+			<flow name="ITTTM">
+				<eqn>Transfers_to_Telemedicine</eqn>
+				<non_negative/>
+			</flow>
+			<stock name="Total\nConsultations\nRepeat">
+				<eqn>100</eqn>
+				<inflow>ITCRB</inflow>
+			</stock>
+			<flow name="ITCRB">
+				<eqn>Repeat_Consultations</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Regular Care\nBacklog Net Flow">
+				<eqn>Regular_Care_Demand+Pandemic_Demand+Repeat_Consultations-Consultations_Completed-Transfers_to_Telemedicine</eqn>
+			</aux>
+			<stock name="Total Consultations\nCompleted">
+				<eqn>100</eqn>
+				<inflow>ITCC</inflow>
+			</stock>
+			<flow name="ITCC">
+				<eqn>Consultations_Completed</eqn>
+				<non_negative/>
+			</flow>
+		</variables>
+		<views>
+			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+				<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:loop_indicator color="black" background="white" vertical_text_align="top" font_size="12pt"/>
+				<numeric_display color="white" background="white" font_size="12pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+				<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+					<isee:series_styles>
+						<isee:series_style color="blue" thickness="1"/>
+						<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF7F00" thickness="1"/>
+						<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF007F" thickness="1"/>
+						<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#C8C8C8" thickness="1"/>
+					</isee:series_styles>
+				</graph>
+				<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				<button color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595"/>
+				<isee:annotation color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595" popup_corner_radius="0" popup_background_color="#FFFECF"/>
+				<slider color="#66CC66" background="#E0E0E0" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" vertical="false" isee:fancy_appearance="false" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:stacked_container color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" padding="6 8" border_color="#999999" border_width="thin" border_style="solid" item_spacing="0" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				<isee:dual_slider color="#66CC66" background="silver" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:sim_speed_slider color="black" background="white"/>
+				<isee:time_slider color="#E95F74" background="silver"/>
+				<isee:pie_input color="black" background="white" font_size="12pt" legend_position="bottom" isee:transparent="false"/>
+				<knob color="#66CC66" background="#E0E0E0" font_size="12pt" label_side="bottom" wrap_title="true"/>
+				<numeric_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<isee:dropdown_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<switch color="black" background="#E0E0E0" font_size="12pt" label_side="top" wrap_title="true" isee:appearance="switch" isee:on_color="green"/>
+				<options color="black" background="white" appearance="radio-buttons" arrangement="vertical"/>
+				<graphical_input color="black" background="#E0E0E0" font_size="12pt" isee:show_hover_tip="true"/>
+				<group_input color="black" background="#E0E0E0" font_size="12pt"/>
+				<lamp color="black" background="white" font_size="9pt"/>
+				<gauge color="black" background="white" font_size="9pt" needle_color="#F09F72" bar_color="#EEEEEE" bar_progress_color="black" appearance="radial" num_major_ticks="11" num_minor_ticks="1" show_numeric_value="true"/>
+				<isee:spatial_map color="black" background="white" font_size="12pt"/>
+				<isee:animation_object color="black" background="white" font_size="12pt"/>
+				<isee:navigation_widget color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" padding="6 8" border_color="#999999" border_width="thin" border_style="solid" item_spacing="6" appearance="tabs" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				<isee:shape color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid" opacity="1" transparent_background="true" corner_radius="1"/>
+				<isee:selector color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
+				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" hide_border="false" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+			</style>
+			<view isee:show_pages="false" background="white" page_width="822" page_height="575" isee:page_cols="3" isee:page_rows="3" isee:scroll_x="42.5" zoom="120" isee:popup_graphs_are_comparative="true" isee:enable_non_negative_highlights="false" type="stock_flow">
+				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="45" height="35"/>
+					</stock>
+					<flow color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</flow>
+					<isee:placeholder color="#228B22" background="white" font_color="#228B22" font_size="9pt" label_side="bottom"/>
+					<module color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="55" height="45"/>
+					</module>
+					<aux color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</aux>
+					<group color="red" background="white" font_color="red" font_size="9pt"/>
+					<connector color="#FF007F" background="white" font_color="#FF007F" font_size="9pt" isee:thickness="1"/>
+					<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<isee:loop_indicator color="black" background="white" vertical_text_align="top" font_size="12pt"/>
+					<numeric_display color="white" background="white" font_size="12pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+					<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+						<isee:series_styles>
+							<isee:series_style color="blue" thickness="1"/>
+							<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF7F00" thickness="1"/>
+							<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF007F" thickness="1"/>
+							<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#C8C8C8" thickness="1"/>
+						</isee:series_styles>
+					</graph>
+					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				</style>
+				<stock label_side="center" x="522.666" y="348.666" width="86" height="60" name="Regular Care\nBacklog"/>
+				<flow x="426.916" y="380.166" name="Consultations">
+					<pts>
+						<pt x="331.166" y="380.166"/>
+						<pt x="522.666" y="380.166"/>
+					</pts>
+				</flow>
+				<flow x="682.416" y="383.309" name="Consultations Completed">
+					<pts>
+						<pt x="608.666" y="383.309"/>
+						<pt x="780.166" y="383.309"/>
+					</pts>
+				</flow>
+				<flow color="#FF9300" font_color="#FF9300" x="565.666" y="285" name="Repeat\nConsultations">
+					<pts>
+						<pt x="565.666" y="233.333"/>
+						<pt x="565.666" y="348.666"/>
+					</pts>
+				</flow>
+				<aux x="406.166" y="455.827" name="Desired\nConsultations\nCompleted"/>
+				<connector uid="1" color="#00F900" font_color="#00F900" isee:thickness="3" polarity="+" isee:polarity_placement="outside" angle="184.978">
+					<from>Regular_Care_Backlog</from>
+					<to>Desired_Consultations_Completed</to>
+				</connector>
+				<connector uid="2" angle="31.0454">
+					<from>Desired_Consultations_Completed</from>
+					<to>Consultations_Completed</to>
+				</connector>
+				<aux x="547.666" y="613.791" name="Standard Workday"/>
+				<aux x="426.916" y="643.166" name="Standard Completion Rate"/>
+				<aux x="504.969" y="679.166" name="Net Labour"/>
+				<connector uid="3" angle="205.372">
+					<from>Standard_Workday</from>
+					<to>Standard_Completion_Rate</to>
+				</connector>
+				<connector uid="4" angle="171.599">
+					<from>Net_Labour</from>
+					<to>Standard_Completion_Rate</to>
+				</connector>
+				<aux font_weight="bold" x="406.25" y="525.238" width="33" height="33" name="Schedule\nPressure"/>
+				<connector uid="5" color="#00F900" font_color="#00F900" isee:thickness="3" angle="260.881">
+					<from>Desired_Consultations_Completed</from>
+					<to>Schedule_Pressure</to>
+				</connector>
+				<connector uid="6" angle="108.285">
+					<from>Standard_Completion_Rate</from>
+					<to>Schedule_Pressure</to>
+				</connector>
+				<aux x="688.25" y="524.738" name="Workday"/>
+				<connector uid="7" angle="10.9879">
+					<from>Standard_Workday</from>
+					<to>Workday</to>
+				</connector>
+				<aux x="513.666" y="557.839" name="B1 Effect of Schedule\nPressure on Workday"/>
+				<aux x="747.523" y="453.452" width="28.8333" height="28.8333" name="Potential\nConsultations\nCompleted"/>
+				<connector uid="8" color="#00F900" font_color="#00F900" isee:thickness="3" angle="12.6834">
+					<from>Workday</from>
+					<to>Potential_Consultations_Completed</to>
+				</connector>
+				<connector uid="9" color="#00FDFF" font_color="#00FDFF" isee:thickness="3" angle="13.4395">
+					<from>Net_Labour</from>
+					<to>Potential_Consultations_Completed</to>
+				</connector>
+				<aux x="277.452" y="690.452" name="Standard Time in Hours"/>
+				<aux x="232.327" y="462.452" name="Standard Delay in Days"/>
+				<connector uid="10" angle="128.338">
+					<from>Standard_Time_in_Hours</from>
+					<to>Standard_Delay_in_Days</to>
+				</connector>
+				<connector uid="11" angle="18.326">
+					<from>Standard_Delay_in_Days</from>
+					<to>Desired_Consultations_Completed</to>
+				</connector>
+				<aux x="660.845" y="297.452" name="Average Delay Time"/>
+				<connector uid="12" angle="52.943">
+					<from>Regular_Care_Backlog</from>
+					<to>Average_Delay_Time</to>
+				</connector>
+				<connector uid="13" angle="71.9432">
+					<from>Consultations_Completed</from>
+					<to>Average_Delay_Time</to>
+				</connector>
+				<connector uid="14" angle="187.512">
+					<from>Standard_Workday</from>
+					<to>Standard_Delay_in_Days</to>
+				</connector>
+				<connector uid="15" angle="358.789">
+					<from>Standard_Time_in_Hours</from>
+					<to>Standard_Completion_Rate</to>
+				</connector>
+				<connector uid="16" angle="298.803">
+					<from>Standard_Time_in_Hours</from>
+					<to>Potential_Consultations_Completed</to>
+				</connector>
+				<connector uid="17" color="#00F900" font_color="#00F900" isee:thickness="3" angle="121.599">
+					<from>Potential_Consultations_Completed</from>
+					<to>Consultations_Completed</to>
+				</connector>
+				<connector uid="18" color="#00F900" font_color="#00F900" isee:thickness="3" polarity="+" isee:polarity_placement="outside" angle="331.489">
+					<from>Schedule_Pressure</from>
+					<to>B1_Effect_of_Schedule_Pressure_on_Workday</to>
+				</connector>
+				<aux x="609.709" y="547.422" name="Effect of Schedule\nPressure on Workday"/>
+				<aux background="black" font_weight="bold" text_decoration="underline" font_color="black" x="604.084" y="484.452" name="Activate B1\nOvertime">
+					<shape type="circle" radius="0"/>
+				</aux>
+				<connector uid="19" angle="286.014">
+					<from>Activate_B1_Overtime</from>
+					<to>Effect_of_Schedule_Pressure_on_Workday</to>
+				</connector>
+				<connector uid="20" color="#00F900" font_color="#00F900" isee:thickness="3" angle="16.1097">
+					<from>Effect_of_Schedule_Pressure_on_Workday</from>
+					<to>Workday</to>
+				</connector>
+				<connector uid="21" color="#00F900" font_color="#00F900" isee:thickness="3" polarity="+" isee:polarity_placement="outside" angle="352.738">
+					<from>B1_Effect_of_Schedule_Pressure_on_Workday</from>
+					<to>Effect_of_Schedule_Pressure_on_Workday</to>
+				</connector>
+				<aux x="719.827" y="595.791" name="Recent Workday"/>
+				<connector uid="22" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="280.935">
+					<from>Workday</from>
+					<to>Recent_Workday</to>
+				</connector>
+				<aux background="#942192" x="682.416" y="635.666" name="Fatigue Onset Time"/>
+				<connector uid="23" angle="20.9457">
+					<from>Fatigue_Onset_Time</from>
+					<to>Recent_Workday</to>
+				</connector>
+				<aux x="788.041" y="661.166" name="R1 Effect of Fatigue on Productivity"/>
+				<connector uid="26" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="301.654">
+					<from>Recent_Workday</from>
+					<to>R1_Effect_of_Fatigue_on_Productivity</to>
+				</connector>
+				<aux background="black" font_weight="bold" text_decoration="underline" font_color="black" label_side="bottom" x="945.416" y="655.666" name="Activate R1\nBurnout">
+					<shape type="circle" radius="0"/>
+				</aux>
+				<aux x="876.791" y="673.666" name="Effect of Fatigue on Productivity"/>
+				<connector uid="27" angle="194.697">
+					<from>Activate_R1_Burnout</from>
+					<to>Effect_of_Fatigue_on_Productivity</to>
+				</connector>
+				<connector uid="28" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="339.476">
+					<from>R1_Effect_of_Fatigue_on_Productivity</from>
+					<to>Effect_of_Fatigue_on_Productivity</to>
+				</connector>
+				<connector uid="29" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="81.9466">
+					<from>Effect_of_Fatigue_on_Productivity</from>
+					<to>Potential_Consultations_Completed</to>
+				</connector>
+				<aux background="#942192" x="914.479" y="751.125" name="Fatigue Reporting Delay"/>
+				<aux x="642.845" y="751.125" name="B1.1 Effect of Reported Fatigue on Workday"/>
+				<aux x="624.845" y="681.666" name="Effect of Reported\nFatigue on Workday"/>
+				<aux background="black" font_weight="bold" text_decoration="underline" font_color="black" x="698.344" y="687.166" name="Activate B1.1\nDuty of Care">
+					<shape type="circle" radius="0"/>
+				</aux>
+				<connector uid="30" color="#00F900" font_color="#00F900" isee:thickness="3" angle="122.326">
+					<from>&quot;B1.1_Effect_of_Reported_Fatigue_on_Workday&quot;</from>
+					<to>Effect_of_Reported_Fatigue_on_Workday</to>
+				</connector>
+				<connector uid="31" angle="184.795">
+					<from>&quot;Activate_B1.1_Duty_of_Care&quot;</from>
+					<to>Effect_of_Reported_Fatigue_on_Workday</to>
+				</connector>
+				<stock label_side="center" x="719.88" y="771.666" width="92.5" height="62.5" name="Reported\nEffects of\nFatigue on\nProductivity"/>
+				<flow x="846.024" y="809.167" name="CREFOP">
+					<pts>
+						<pt x="891.667" y="809.167"/>
+						<pt x="812.38" y="809.167"/>
+					</pts>
+				</flow>
+				<connector uid="32" color="#00F900" font_color="#00F900" isee:thickness="3" angle="284.69">
+					<from>Effect_of_Fatigue_on_Productivity</from>
+					<to>CREFOP</to>
+				</connector>
+				<connector uid="33" angle="37.3138">
+					<from>Reported_Effects_of_Fatigue_on_Productivity</from>
+					<to>CREFOP</to>
+				</connector>
+				<connector uid="34" angle="238.428">
+					<from>Fatigue_Reporting_Delay</from>
+					<to>CREFOP</to>
+				</connector>
+				<connector uid="35" color="#00F900" font_color="#00F900" isee:thickness="3" angle="82.0339">
+					<from>Effect_of_Reported_Fatigue_on_Workday</from>
+					<to>Workday</to>
+				</connector>
+				<connector uid="36" color="#00F900" font_color="#00F900" isee:thickness="3" angle="165.967">
+					<from>Reported_Effects_of_Fatigue_on_Productivity</from>
+					<to>&quot;B1.1_Effect_of_Reported_Fatigue_on_Workday&quot;</to>
+				</connector>
+				<isee:loop_indicator color="#0433FF" font_style="italic" font_weight="bold" font_color="#0433FF" font_size="10pt" text="B1" orientation="counter_clockwise" uid="37" x="626.428" y="453.25" width="52.8217" height="34.964">
+					<name>Overtime</name>
+					<isee:entities>
+						<item uid="1"/>
+						<item uid="5"/>
+						<item uid="18"/>
+						<item uid="21"/>
+						<item uid="20"/>
+						<item uid="9"/>
+						<item uid="8"/>
+						<item uid="17"/>
+						<entity name="Desired_Consultations_Completed"/>
+						<entity name="Schedule_Pressure"/>
+						<entity name="B1_Effect_of_Schedule_Pressure_on_Workday"/>
+						<entity name="Effect_of_Schedule_Pressure_on_Workday"/>
+						<entity name="Workday"/>
+						<entity name="Potential_Consultations_Completed"/>
+						<entity name="Consultations_Completed"/>
+						<entity name="Regular_Care_Backlog"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<isee:loop_indicator color="#FF2600" font_style="italic" font_weight="bold" font_color="#FF2600" font_size="10pt" text="R1" orientation="counter_clockwise" uid="38" x="781.832" y="571.541" width="68.8757" height="33.25">
+					<name>Burnout</name>
+					<isee:entities>
+						<item uid="1"/>
+						<item uid="5"/>
+						<item uid="18"/>
+						<item uid="21"/>
+						<item uid="20"/>
+						<item uid="9"/>
+						<item uid="22"/>
+						<item uid="26"/>
+						<item uid="28"/>
+						<item uid="29"/>
+						<item uid="17"/>
+						<entity name="Desired_Consultations_Completed"/>
+						<entity name="Schedule_Pressure"/>
+						<entity name="B1_Effect_of_Schedule_Pressure_on_Workday"/>
+						<entity name="Effect_of_Schedule_Pressure_on_Workday"/>
+						<entity name="Workday"/>
+						<entity name="Recent_Workday"/>
+						<entity name="R1_Effect_of_Fatigue_on_Productivity"/>
+						<entity name="Effect_of_Fatigue_on_Productivity"/>
+						<entity name="Potential_Consultations_Completed"/>
+						<entity name="Consultations_Completed"/>
+						<entity name="Regular_Care_Backlog"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<isee:loop_indicator color="#0433FF" font_style="italic" font_weight="bold" font_color="#0433FF" font_size="10pt" text="B1.S" orientation="clockwise" uid="39" x="753.603" y="718.041" width="68.8757" height="33.25">
+					<name>Duty of Care</name>
+					<isee:entities>
+						<item uid="1"/>
+						<item uid="5"/>
+						<item uid="18"/>
+						<item uid="21"/>
+						<item uid="20"/>
+						<item uid="32"/>
+						<item uid="36"/>
+						<item uid="30"/>
+						<item uid="22"/>
+						<item uid="26"/>
+						<item uid="28"/>
+						<item uid="8"/>
+						<item uid="17"/>
+						<item uid="35"/>
+						<entity name="Desired_Consultations_Completed"/>
+						<entity name="Schedule_Pressure"/>
+						<entity name="B1_Effect_of_Schedule_Pressure_on_Workday"/>
+						<entity name="Effect_of_Schedule_Pressure_on_Workday"/>
+						<entity name="Effect_of_Fatigue_on_Productivity"/>
+						<entity name="CREFOP"/>
+						<entity name="Workday"/>
+						<entity name="Recent_Workday"/>
+						<entity name="R1_Effect_of_Fatigue_on_Productivity"/>
+						<entity name="Potential_Consultations_Completed"/>
+						<entity name="Consultations_Completed"/>
+						<entity name="Effect_of_Reported_Fatigue_on_Workday"/>
+						<entity name="Regular_Care_Backlog"/>
+						<entity name="Reported_Effects_of_Fatigue_on_Productivity"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<aux x="547.666" y="744.666" name="Fixed Labour"/>
+				<connector uid="40" angle="141.759">
+					<from>Fixed_Labour</from>
+					<to>Net_Labour</to>
+				</connector>
+				<aux background="white" x="335.809" y="534.238" name="Desired Total Labour"/>
+				<connector uid="41" color="#00FDFF" font_color="#00FDFF" isee:thickness="3" angle="201.451">
+					<from>Desired_Consultations_Completed</from>
+					<to>Desired_Total_Labour</to>
+				</connector>
+				<aux background="white" x="308.041" y="589.541" name="Standard Daily Productivty"/>
+				<connector uid="42" angle="88.1233">
+					<from>Standard_Time_in_Hours</from>
+					<to>Standard_Daily_Productivty</to>
+				</connector>
+				<connector uid="43" angle="194.283">
+					<from>Standard_Workday</from>
+					<to>Standard_Daily_Productivty</to>
+				</connector>
+				<connector uid="44" angle="63.3385">
+					<from>Standard_Daily_Productivty</from>
+					<to>Desired_Total_Labour</to>
+				</connector>
+				<aux background="white" x="361.499" y="734.666" name="Desired Surge Labour"/>
+				<connector uid="45" color="#00FDFF" font_color="#00FDFF" isee:thickness="3" angle="264.775">
+					<from>Desired_Total_Labour</from>
+					<to>Desired_Surge_Labour</to>
+				</connector>
+				<connector uid="46" angle="200.129">
+					<from>Fixed_Labour</from>
+					<to>Desired_Surge_Labour</to>
+				</connector>
+				<stock color="blue" background="white" label_side="center" x="459.345" y="897.737" width="63.5714" height="44.2857" name="Surge\nLabour"/>
+				<flow background="white" x="424.756" y="914.88" name="CSL">
+					<pts>
+						<pt x="378.166" y="914.88"/>
+						<pt x="459.345" y="914.88"/>
+					</pts>
+				</flow>
+				<aux background="#942192" x="456.636" y="854.238" width="21.3333" height="21.3333" name="AF Labour"/>
+				<connector uid="47" angle="214.392">
+					<from>AF_Labour</from>
+					<to>CSL</to>
+				</connector>
+				<connector uid="48" angle="205.438">
+					<from>Surge_Labour</from>
+					<to>CSL</to>
+				</connector>
+				<aux background="black" font_weight="bold" text_decoration="underline" font_color="black" label_side="bottom" x="302.684" y="873.964" name="Activate B3\nSurge Resources">
+					<shape type="circle" radius="0"/>
+				</aux>
+				<connector uid="49" angle="9.34434">
+					<from>Activate_B3_Surge_Resources</from>
+					<to>CSL</to>
+				</connector>
+				<stock background="white" label_side="center" x="913.933" y="212" width="67.1429" height="55" name="Surge\nPreparedness\nProportion"/>
+				<aux background="#942192" label_side="bottom" x="945.416" y="313.393" name="Maximum\nPreparedness\nProportion"/>
+				<aux background="#942192" x="868.607" y="179.667" name="AF Preparedness"/>
+				<aux background="#942192" x="933.767" y="143.667" name="Minimum\nPreparedness\nProportion"/>
+				<connector uid="54" color="#00FDFF" font_color="#00FDFF" isee:thickness="3" angle="96.4165">
+					<from>Surge_Labour</from>
+					<to>Net_Labour</to>
+				</connector>
+				<aux background="#00FDFF" label_side="top" x="798.541" y="896.88" name="Fixed\nLabour\nProportion"/>
+				<connector uid="55" angle="306.908">
+					<from>Fixed_Labour</from>
+					<to>Fixed_Labour_Proportion</to>
+				</connector>
+				<connector uid="56" angle="287.434">
+					<from>Net_Labour</from>
+					<to>Fixed_Labour_Proportion</to>
+				</connector>
+				<aux background="#00FDFF" x="914.479" y="907.047" name="Surge Labour Proportion"/>
+				<connector uid="57" angle="284.812">
+					<from>Net_Labour</from>
+					<to>Surge_Labour_Proportion</to>
+				</connector>
+				<connector uid="58" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="343.392">
+					<from>Surge_Labour</from>
+					<to>Surge_Labour_Proportion</to>
+				</connector>
+				<aux background="white" x="982.547" y="455.077" name="Quality Fraction"/>
+				<aux background="white" x="978.93" y="534.238" name="Fixed\nLabour\nQuality Fraction"/>
+				<connector uid="59" angle="107.341">
+					<from>Fixed_Labour_Quality_Fraction</from>
+					<to>Quality_Fraction</to>
+				</connector>
+				<connector uid="60" angle="12.7713">
+					<from>Fixed_Labour_Proportion</from>
+					<to>Quality_Fraction</to>
+				</connector>
+				<connector uid="61" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="33.1339">
+					<from>Surge_Labour_Proportion</from>
+					<to>Quality_Fraction</to>
+				</connector>
+				<connector uid="62" angle="300.9">
+					<from>Surge_Preparedness_Proportion</from>
+					<to>Quality_Fraction</to>
+				</connector>
+				<connector uid="63" angle="155.611">
+					<from>Quality_Fraction</from>
+					<to>Consultations_Completed</to>
+				</connector>
+				<connector uid="65" angle="101.454">
+					<from>Desired_Consultations_Completed</from>
+					<to>Readmissions</to>
+				</connector>
+				<connector uid="66" angle="100.479">
+					<from>Potential_Consultations_Completed</from>
+					<to>Readmissions</to>
+				</connector>
+				<isee:loop_indicator color="#0433FF" font_weight="bold" font_color="#0433FF" font_size="10pt" text="B3" orientation="counter_clockwise" uid="68" x="417.969" y="678.875" width="30" height="30">
+					<name>Surge 
+Resources</name>
+					<isee:entities>
+						<item uid="1"/>
+						<item uid="41"/>
+						<item uid="45"/>
+						<item uid="54"/>
+						<item uid="9"/>
+						<item uid="17"/>
+						<entity name="Desired_Consultations_Completed"/>
+						<entity name="Desired_Total_Labour"/>
+						<entity name="Desired_Surge_Labour"/>
+						<entity name="Net_Labour"/>
+						<entity name="Consultations_Completed"/>
+						<entity name="Potential_Consultations_Completed"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<isee:loop_indicator color="#FF2600" font_style="italic" font_weight="bold" font_color="#FF2600" font_size="10pt" text="R3" orientation="counter_clockwise" uid="69" x="906.416" y="509.738" width="30" height="30">
+					<name>Sub-optimal 
+consultations</name>
+					<isee:entities>
+						<item uid="58"/>
+						<item uid="61"/>
+						<item uid="64"/>
+						<item uid="1"/>
+						<item uid="41"/>
+						<item uid="45"/>
+						<item uid="46"/>
+						<item uid="138"/>
+						<item uid="139"/>
+						<entity name="Surge_Labour_Proportion"/>
+						<entity name="Quality_Fraction"/>
+						<entity name="Desired_Consultations_Completed"/>
+						<entity name="Desired_Total_Labour"/>
+						<entity name="Future_Readmission_Cases"/>
+						<entity name="Repeat_Consultations"/>
+						<entity name="Regular_Care_Backlog"/>
+						<entity name="Surge_Labour"/>
+						<entity name="Constrained_Surge_Labour"/>
+						<entity name="Desired_Surge_Labour"/>
+						<entity name="CSL"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<aux background="black" font_weight="bold" text_decoration="underline" font_color="black" x="855.024" y="448.285" width="27.1667" height="27.1667" name="Activate R3\nSub-Optimal\nConsultations">
+					<shape type="circle" radius="0"/>
+				</aux>
+				<connector uid="71" angle="13.7551">
+					<from>&quot;Activate_R3_Sub-Optimal_Consultations&quot;</from>
+					<to>Quality_Fraction</to>
+				</connector>
+				<aux label_side="bottom" x="473.636" y="327.452" name="Regular\nCare\nDemand"/>
+				<aux font_style="italic" font_weight="bold" x="366.119" y="409.327" name="Pandemic Demand"/>
+				<connector uid="73" angle="40.9523">
+					<from>Pandemic_Demand</from>
+					<to>Consultations</to>
+				</connector>
+				<connector uid="74" angle="249.292">
+					<from>Regular_Care_Demand</from>
+					<to>Consultations</to>
+				</connector>
+				<flow label_side="bottom" x="560.833" y="444.25" name="Transfers to\nTelemedicine">
+					<pts>
+						<pt x="560.833" y="408.666"/>
+						<pt x="560.833" y="500.833"/>
+					</pts>
+				</flow>
+				<connector uid="75" color="#00FDFF" font_color="#00FDFF" isee:thickness="3" angle="1.35403">
+					<from>Schedule_Pressure</from>
+					<to>Transfers_to_Telemedicine</to>
+				</connector>
+				<stock label_side="center" x="540.917" y="185.833" width="54.1667" height="47.5" name="Future\nReadmission\nCases"/>
+				<flow x="565.666" y="151.25" name="Readmissions">
+					<pts>
+						<pt x="565.666" y="116.667"/>
+						<pt x="565.666" y="185.833"/>
+					</pts>
+				</flow>
+				<aux x="486.969" y="279.083" name="Readmission\nDelay"/>
+				<connector uid="77" angle="355.701">
+					<from>Readmission_Delay</from>
+					<to>Repeat_Consultations</to>
+				</connector>
+				<isee:loop_indicator color="#0433FF" font_style="italic" font_weight="bold" font_color="#0433FF" font_size="10pt" text="B2" orientation="clockwise" uid="78" x="447.969" y="440.702" width="30" height="28.75">
+					<name>Digital 
+Health</name>
+					<isee:entities>
+						<item uid="1"/>
+						<item uid="5"/>
+						<item uid="75"/>
+						<entity name="Desired_Consultations_Completed"/>
+						<entity name="Schedule_Pressure"/>
+						<entity name="Transfers_to_Telemedicine"/>
+						<entity name="Regular_Care_Backlog"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<aux background="black" font_weight="bold" text_decoration="underline" font_color="black" x="507.292" y="429.827" name="Activate B2\nDigital Health">
+					<shape type="circle" radius="0"/>
+				</aux>
+				<connector uid="79" angle="344.924">
+					<from>Activate_B2_Digital_Health</from>
+					<to>Transfers_to_Telemedicine</to>
+				</connector>
+				<stock label_side="center" x="784.833" y="132.917" width="53.3333" height="55.8333" name="Digital\nHealth\nAdoption\nFraction"/>
+				<flow x="741.75" y="161.667" name="IDHF">
+					<pts>
+						<pt x="686.667" y="161.667"/>
+						<pt x="784.833" y="161.667"/>
+					</pts>
+				</flow>
+				<aux x="788.041" y="100.476" name="Max Digital Health Fraction"/>
+				<connector uid="80" angle="199.098">
+					<from>Max_Digital_Health_Fraction</from>
+					<to>IDHF</to>
+				</connector>
+				<aux background="#942192" x="710.88" y="114.473" name="AF Digital Health"/>
+				<connector uid="81" angle="290.932">
+					<from>AF_Digital_Health</from>
+					<to>IDHF</to>
+				</connector>
+				<connector uid="82" angle="216.388">
+					<from>Digital_Health_Adoption_Fraction</from>
+					<to>IDHF</to>
+				</connector>
+				<stock label_side="center" x="259.167" y="189.167" width="64.1667" height="48.3333" name="Telemedicine\nPatients"/>
+				<flow x="291.667" y="275" name="Patients Transferred">
+					<pts>
+						<pt x="291.667" y="312.5"/>
+						<pt x="291.667" y="237.5"/>
+					</pts>
+				</flow>
+				<connector uid="86" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="228.457">
+					<from>Transfers_to_Telemedicine</from>
+					<to>Patients_Transferred</to>
+				</connector>
+				<flow color="#FF9300" font_color="#FF9300" x="426.125" y="211.25" name="Readmissions\nfrom\nTelemedicine">
+					<pts>
+						<pt x="323.333" y="211.25"/>
+						<pt x="540.917" y="211.25"/>
+					</pts>
+				</flow>
+				<connector uid="87" angle="6.95296">
+					<from>Patients_Transferred</from>
+					<to>Readmissions_from_Telemedicine</to>
+				</connector>
+				<connector uid="88" angle="149.018">
+					<from>Readmission_Delay</from>
+					<to>Readmissions_from_Telemedicine</to>
+				</connector>
+				<flow label_side="left" x="296.667" y="153" name="Completed\nTelemedicine\nTreatment">
+					<pts>
+						<pt x="296.667" y="189.167"/>
+						<pt x="296.667" y="95.8333"/>
+					</pts>
+				</flow>
+				<aux background="black" font_weight="bold" text_decoration="underline" font_color="black" x="379.499" y="267" name="Activate R2\nTelemedicine\nRework">
+					<shape type="circle" radius="0"/>
+				</aux>
+				<connector uid="89" angle="24.0248">
+					<from>Activate_R2_Telemedicine_Rework</from>
+					<to>Readmissions_from_Telemedicine</to>
+				</connector>
+				<flow x="876.3" y="239.5" name="CSPP">
+					<pts>
+						<pt x="826.667" y="239.5"/>
+						<pt x="913.933" y="239.5"/>
+					</pts>
+				</flow>
+				<connector uid="92" angle="205.735">
+					<from>Surge_Preparedness_Proportion</from>
+					<to>CSPP</to>
+				</connector>
+				<connector uid="93" angle="295.634">
+					<from>AF_Preparedness</from>
+					<to>CSPP</to>
+				</connector>
+				<connector uid="94" angle="145.855">
+					<from>Maximum_Preparedness_Proportion</from>
+					<to>CSPP</to>
+				</connector>
+				<connector uid="95" angle="252.457">
+					<from>Digital_Health_Adoption_Fraction</from>
+					<to>Transfers_to_Telemedicine</to>
+				</connector>
+				<stock label_side="center" x="403.303" y="120.952" width="56.6667" height="38.3333" name="Telemedicine\nEffectiveness\nFraction"/>
+				<flow x="433.469" y="82.476" name="CTE">
+					<pts>
+						<pt x="433.469" y="35"/>
+						<pt x="433.469" y="120.952"/>
+					</pts>
+				</flow>
+				<aux x="513.666" y="45" name="Maximum Telemedicine Effectiveness"/>
+				<aux background="#942192" x="388.166" y="34.5" name="AF TME"/>
+				<aux background="#942192" x="353.809" y="70.5" name="Minimum\nTelemedicine\nEffectiveness"/>
+				<connector uid="96" angle="126.002">
+					<from>Activate_R2_Telemedicine_Rework</from>
+					<to>Completed_Telemedicine_Treatment</to>
+				</connector>
+				<connector uid="97" angle="132.207">
+					<from>Patients_Transferred</from>
+					<to>Completed_Telemedicine_Treatment</to>
+				</connector>
+				<connector uid="98" angle="172.305">
+					<from>Telemedicine_Effectiveness_Fraction</from>
+					<to>Completed_Telemedicine_Treatment</to>
+				</connector>
+				<connector uid="99" angle="265.57">
+					<from>Telemedicine_Effectiveness_Fraction</from>
+					<to>Readmissions_from_Telemedicine</to>
+				</connector>
+				<connector uid="100" angle="223.799">
+					<from>Maximum_Telemedicine_Effectiveness</from>
+					<to>CTE</to>
+				</connector>
+				<connector uid="101" angle="313.359">
+					<from>AF_TME</from>
+					<to>CTE</to>
+				</connector>
+				<connector uid="102" angle="47.3711">
+					<from>Telemedicine_Effectiveness_Fraction</from>
+					<to>CTE</to>
+				</connector>
+				<connector uid="103" angle="112.249">
+					<from>Readmission_Delay</from>
+					<to>Completed_Telemedicine_Treatment</to>
+				</connector>
+				<isee:loop_indicator color="#FF2600" font_style="italic" font_weight="bold" font_color="#FF2600" font_size="10pt" text="R2" orientation="clockwise" uid="104" x="327.119" y="298.393" width="30" height="30">
+					<name>Digital Health 
+Rework</name>
+					<isee:entities>
+						<item uid="86"/>
+						<entity name="Patients_Transferred"/>
+						<entity name="Telemedicine_Patients"/>
+						<entity name="Readmissions_from_Telemedicine"/>
+						<entity name="Future_Readmission_Cases"/>
+						<entity name="Repeat_Consultations"/>
+						<entity name="Regular_Care_Backlog"/>
+						<entity name="Transfers_to_Telemedicine"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<connector uid="105" angle="286.637">
+					<from>Regular_Care_Backlog</from>
+					<to>Transfers_to_Telemedicine</to>
+				</connector>
+				<stacked_container uid="120" x="1171.91" y="103.473" width="406.667" height="243.375" minimized="true">
+					<graph width="406.667" height="243.375" comparative="true" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="RMSE"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<stacked_container uid="131" x="1182.74" y="376.666" width="385" height="266.666">
+					<graph width="385" height="266.666" comparative="true" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Regular_Care_Backlog"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<connector uid="64" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="122.056">
+					<from>Quality_Fraction</from>
+					<to>Readmissions</to>
+				</connector>
+				<connector uid="132" angle="287.779">
+					<from>Future_Readmission_Cases</from>
+					<to>Repeat_Consultations</to>
+				</connector>
+				<stock label_side="center" x="136.625" y="336.452" width="76.875" height="49.375" name="Sum of Squared\nDifference in KPI"/>
+				<flow x="172.625" y="302.559" name="Difference">
+					<pts>
+						<pt x="172.625" y="268.666"/>
+						<pt x="172.625" y="336.452"/>
+					</pts>
+				</flow>
+				<connector uid="133" angle="198.737">
+					<from>Average_Delay_Time</from>
+					<to>Difference</to>
+				</connector>
+				<connector uid="134" angle="82.9223">
+					<from>Standard_Delay_in_Days</from>
+					<to>Difference</to>
+				</connector>
+				<aux background="#FF40FF" x="164.292" y="426.25" name="RMSE"/>
+				<connector uid="135" angle="251.479">
+					<from>Sum_of_Squared_Difference_in_KPI</from>
+					<to>RMSE</to>
+				</connector>
+				<stacked_container uid="136" x="1263.93" y="189.417" minimized="true">
+					<graph width="350" height="250" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Consultations"/>
+						</plot>
+						<plot color="red" pen_style="dot_dashed" isee:keep_zero_visible="true" pen_width="1" index="1" show_y_axis="true">
+							<entity name="SEIR.Output_Primary_Care_Demand"/>
+						</plot>
+						<plot color="fuchsia" pen_style="dotted" isee:keep_zero_visible="true" pen_width="1" index="2" show_y_axis="true">
+							<entity name="Regular_Care_Demand"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<aux background="white" x="245.833" y="751.125" name="Maximum Surge Labour"/>
+				<aux x="361.499" y="802.916" name="Constrained Surge Labour"/>
+				<connector uid="137" angle="335.879">
+					<from>Maximum_Surge_Labour</from>
+					<to>Constrained_Surge_Labour</to>
+				</connector>
+				<connector uid="138" color="#00FDFF" font_color="#00FDFF" isee:thickness="3" angle="270">
+					<from>Desired_Surge_Labour</from>
+					<to>Constrained_Surge_Labour</to>
+				</connector>
+				<connector uid="139" color="#00FDFF" font_color="#00FDFF" isee:thickness="3" angle="299.465">
+					<from>Constrained_Surge_Labour</from>
+					<to>CSL</to>
+				</connector>
+				<aux background="#942192" x="157.792" y="760.125" width="23.8333" height="23.8333" name="Maximum Surge Capacity Fraction"/>
+				<connector uid="140" angle="147.673">
+					<from>Fixed_Labour</from>
+					<to>Maximum_Surge_Labour</to>
+				</connector>
+				<connector uid="141" angle="38.4777">
+					<from>Maximum_Surge_Capacity_Fraction</from>
+					<to>Maximum_Surge_Labour</to>
+				</connector>
+				<stock label_side="center" x="1335.66" y="792.5" width="79.1667" height="59.1667" name="Total\nConsultations\nRegular"/>
+				<flow x="1371.67" y="754.583" name="ITCR">
+					<pts>
+						<pt x="1371.67" y="716.667"/>
+						<pt x="1371.67" y="792.5"/>
+					</pts>
+				</flow>
+				<connector uid="142" angle="60.0421">
+					<from>
+						<alias uid="143"/>
+					</from>
+					<to>ITCR</to>
+				</connector>
+				<stock label_side="center" x="1485.83" y="788.309" width="70.8333" height="55" name="Total\nConsultations\nPandemic"/>
+				<flow x="1516.67" y="746.238" name="ITCP">
+					<pts>
+						<pt x="1516.67" y="704.167"/>
+						<pt x="1516.67" y="788.309"/>
+					</pts>
+				</flow>
+				<connector uid="144" angle="114.443">
+					<from>
+						<alias uid="145"/>
+					</from>
+					<to>ITCP</to>
+				</connector>
+				<stock label_side="center" x="1271.49" y="985" width="70" height="56.6667" name="Total\nTransfers to\nTelemedicine"/>
+				<flow x="1310.83" y="1087.08" name="ITTTM">
+					<pts>
+						<pt x="1310.83" y="1132.5"/>
+						<pt x="1310.83" y="1041.67"/>
+					</pts>
+				</flow>
+				<stock label_side="center" x="1414.82" y="979.167" width="67.5" height="57.5" name="Total\nConsultations\nRepeat"/>
+				<flow x="1456.67" y="1088.75" name="ITCRB">
+					<pts>
+						<pt x="1456.67" y="1140.83"/>
+						<pt x="1456.67" y="1036.67"/>
+					</pts>
+				</flow>
+				<connector uid="148" angle="285.524">
+					<from>
+						<alias uid="149"/>
+					</from>
+					<to>ITCRB</to>
+				</connector>
+				<aux x="1436" y="882.964" width="33.8333" height="33.8333" name="Regular Care\nBacklog Net Flow"/>
+				<stock label_side="center" x="1541" y="980" width="68.3333" height="49.1667" name="Total Consultations\nCompleted"/>
+				<flow x="1588.33" y="1081.25" name="ITCC">
+					<pts>
+						<pt x="1588.33" y="1133.33"/>
+						<pt x="1588.33" y="1029.17"/>
+					</pts>
+				</flow>
+				<connector uid="150" angle="279.462">
+					<from>
+						<alias uid="151"/>
+					</from>
+					<to>ITCC</to>
+				</connector>
+				<connector uid="146" angle="254.921">
+					<from>
+						<alias uid="147"/>
+					</from>
+					<to>ITTTM</to>
+				</connector>
+				<connector uid="162" angle="298.25">
+					<from>
+						<alias uid="143"/>
+					</from>
+					<to>Regular_Care_Backlog_Net_Flow</to>
+				</connector>
+				<connector uid="163" angle="228.012">
+					<from>
+						<alias uid="145"/>
+					</from>
+					<to>Regular_Care_Backlog_Net_Flow</to>
+				</connector>
+				<connector uid="164" angle="59.6209">
+					<from>
+						<alias uid="147"/>
+					</from>
+					<to>Regular_Care_Backlog_Net_Flow</to>
+				</connector>
+				<connector uid="165" angle="111.571">
+					<from>
+						<alias uid="149"/>
+					</from>
+					<to>Regular_Care_Backlog_Net_Flow</to>
+				</connector>
+				<connector uid="166" angle="139.764">
+					<from>
+						<alias uid="151"/>
+					</from>
+					<to>Regular_Care_Backlog_Net_Flow</to>
+				</connector>
+				<stacked_container uid="167" x="1239.17" y="584.167">
+					<table width="350" height="250" comparative="true" isee:export_name="Regular Care Table 1" isee:mark_for_export="true">
+						<item type="time"/>
+						<item/>
+					</table>
+				</stacked_container>
+				<alias font_style="italic" uid="143" x="1290.17" y="813.083" width="18" height="18">
+					<of>Regular_Care_Demand</of>
+				</alias>
+				<alias font_style="italic" font_weight="bold" uid="145" x="1589.33" y="800.167" width="18" height="18">
+					<of>Pandemic_Demand</of>
+				</alias>
+				<alias font_style="italic" uid="147" x="1362.67" y="984.333" width="18" height="18">
+					<of>Transfers_to_Telemedicine</of>
+				</alias>
+				<alias color="#FF9300" font_style="italic" font_color="#FF9300" uid="149" x="1504.33" y="987.667" width="18" height="18">
+					<of>Repeat_Consultations</of>
+				</alias>
+				<alias font_style="italic" uid="151" x="1636" y="980.167" width="18" height="18">
+					<of>Consultations_Completed</of>
+				</alias>
+			</view>
+		</views>
+	</model>
+	<model name="SEIR">
+		<variables>
+			<stock name="Susceptible">
+				<eqn>99999</eqn>
+				<outflow>Being_Vaccinated</outflow>
+				<outflow>IR</outflow>
+			</stock>
+			<stock name="Susceptible\nVaccinated">
+				<eqn>0</eqn>
+				<inflow>Being_Vaccinated</inflow>
+			</stock>
+			<flow name="Being Vaccinated">
+				<eqn>Susceptible*Vaccination_Fraction</eqn>
+				<non_negative/>
+			</flow>
+			<stock name="Vaccination\nFraction">
+				<eqn>0</eqn>
+				<inflow>IVF</inflow>
+			</stock>
+			<aux name="Maximum\nVaccination\nFraction">
+				<eqn>0.10</eqn>
+			</aux>
+			<flow name="IVF">
+				<eqn>&quot;Activate_B1.1_Vaccination&quot;*(Maximum_Vaccination_Fraction-Vaccination_Fraction)*PAR_GAMMA</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="PAR GAMMA">
+				<eqn>0.0125</eqn>
+			</aux>
+			<stock name="Infected">
+				<eqn>1</eqn>
+				<inflow>ER</inflow>
+				<outflow>RR</outflow>
+			</stock>
+			<stock name="Recovered">
+				<eqn>0</eqn>
+				<inflow>RR</inflow>
+			</stock>
+			<aux name="Lambda">
+				<eqn>BetaT/N*Infected</eqn>
+			</aux>
+			<flow name="RR">
+				<eqn>Infected/IDelay</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="IDelay">
+				<eqn>2</eqn>
+			</aux>
+			<aux name="BetaZero">
+				<eqn>R0/IDelay</eqn>
+			</aux>
+			<aux name="N">
+				<eqn>100000</eqn>
+			</aux>
+			<aux name="R0">
+				<eqn>2</eqn>
+			</aux>
+			<stock name="Reported\nIncidence">
+				<eqn>0</eqn>
+				<inflow>CRI</inflow>
+			</stock>
+			<flow name="CRI">
+				<eqn>Error/AT</eqn>
+			</flow>
+			<aux name="Error">
+				<eqn>Incidence-Reported_Incidence</eqn>
+			</aux>
+			<aux name="AT">
+				<eqn>2</eqn>
+			</aux>
+			<aux name="Contact Impact Effect">
+				<eqn> 1/(1+0.5*Reported_Incidence)^PAR_ALPHA</eqn>
+			</aux>
+			<aux name="PAR\nALPHA">
+				<eqn>0</eqn>
+			</aux>
+			<aux name="BetaT">
+				<eqn>BetaZero*Contact_Impact</eqn>
+			</aux>
+			<stock name="Exposed">
+				<eqn>0</eqn>
+				<inflow>IR</inflow>
+				<outflow>ER</outflow>
+			</stock>
+			<flow name="IR">
+				<eqn>Lambda*Susceptible</eqn>
+				<non_negative/>
+			</flow>
+			<flow name="ER">
+				<eqn>Exposed/EDelay</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="EDelay">
+				<eqn>2</eqn>
+			</aux>
+			<aux name="Detection Fraction">
+				<eqn>.5</eqn>
+			</aux>
+			<stock name="Cumulative\nDetected\nInfections">
+				<eqn>0</eqn>
+				<inflow>ICDI</inflow>
+			</stock>
+			<flow name="ICDI">
+				<eqn>ER * Detection_Fraction</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Incidence">
+				<eqn>Cumulative_Detected_Infections-HISTORY(Cumulative_Detected_Infections, TIME-1)</eqn>
+			</aux>
+			<aux name="Contact Impact">
+				<eqn>IF &quot;Activate_B1.2_Aware_Citizens&quot; = 1 THEN Contact_Impact_Effect ELSE 1</eqn>
+			</aux>
+			<aux name="Activate B1.2\nAware Citizens">
+				<eqn>0</eqn>
+			</aux>
+			<aux name="Activate B1.1\nVaccination">
+				<eqn>0</eqn>
+			</aux>
+			<aux name="Attack Rate">
+				<eqn>Recovered/N</eqn>
+			</aux>
+			<aux name="Additional Primary Care Demand">
+				<eqn>Incidence*Primary_Care_Demand_Multiplier</eqn>
+			</aux>
+			<aux name="Primary Care\nDemand Multiplier">
+				<eqn>0.15</eqn>
+			</aux>
+			<aux name="Activate Pandemic">
+				<eqn>1</eqn>
+			</aux>
+			<aux name="Output\nPrimary\nCare Demand" access="output">
+				<eqn>Activate_Pandemic*Additional_Primary_Care_Demand</eqn>
+			</aux>
+		</variables>
+		<views>
+			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+				<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:loop_indicator color="black" background="white" vertical_text_align="top" font_size="12pt"/>
+				<numeric_display color="white" background="white" font_size="12pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+				<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+					<isee:series_styles>
+						<isee:series_style color="blue" thickness="1"/>
+						<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF7F00" thickness="1"/>
+						<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF007F" thickness="1"/>
+						<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#C8C8C8" thickness="1"/>
+					</isee:series_styles>
+				</graph>
+				<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				<button color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595"/>
+				<isee:annotation color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595" popup_corner_radius="0" popup_background_color="#FFFECF"/>
+				<slider color="#66CC66" background="#E0E0E0" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" vertical="false" isee:fancy_appearance="false" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:stacked_container color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" padding="6 8" border_color="#999999" border_width="thin" border_style="solid" item_spacing="0" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				<isee:dual_slider color="#66CC66" background="silver" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:sim_speed_slider color="black" background="white"/>
+				<isee:time_slider color="#E95F74" background="silver"/>
+				<isee:pie_input color="black" background="white" font_size="12pt" legend_position="bottom" isee:transparent="false"/>
+				<knob color="#66CC66" background="#E0E0E0" font_size="12pt" label_side="bottom" wrap_title="true"/>
+				<numeric_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<isee:dropdown_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<switch color="black" background="#E0E0E0" font_size="12pt" label_side="top" wrap_title="true" isee:appearance="switch" isee:on_color="green"/>
+				<options color="black" background="white" appearance="radio-buttons" arrangement="vertical"/>
+				<graphical_input color="black" background="#E0E0E0" font_size="12pt" isee:show_hover_tip="true"/>
+				<group_input color="black" background="#E0E0E0" font_size="12pt"/>
+				<lamp color="black" background="white" font_size="9pt"/>
+				<gauge color="black" background="white" font_size="9pt" needle_color="#F09F72" bar_color="#EEEEEE" bar_progress_color="black" appearance="radial" num_major_ticks="11" num_minor_ticks="1" show_numeric_value="true"/>
+				<isee:spatial_map color="black" background="white" font_size="12pt"/>
+				<isee:animation_object color="black" background="white" font_size="12pt"/>
+				<isee:navigation_widget color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" padding="6 8" border_color="#999999" border_width="thin" border_style="solid" item_spacing="6" appearance="tabs" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				<isee:shape color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid" opacity="1" transparent_background="true" corner_radius="1"/>
+				<isee:selector color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
+				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" hide_border="false" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+			</style>
+			<view isee:show_pages="false" background="white" page_width="822" page_height="575" isee:page_cols="2" isee:page_rows="2" isee:scroll_y="1" isee:popup_graphs_are_comparative="true" isee:enable_non_negative_highlights="false" type="stock_flow">
+				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="45" height="35"/>
+					</stock>
+					<flow color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</flow>
+					<isee:placeholder color="#228B22" background="white" font_color="#228B22" font_size="9pt" label_side="bottom"/>
+					<module color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="55" height="45"/>
+					</module>
+					<aux color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</aux>
+					<group color="red" background="white" font_color="red" font_size="9pt"/>
+					<connector color="#FF007F" background="white" font_color="#FF007F" font_size="9pt" isee:thickness="1"/>
+					<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<isee:loop_indicator color="black" background="white" vertical_text_align="top" font_size="12pt"/>
+					<numeric_display color="white" background="white" font_size="12pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+					<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+						<isee:series_styles>
+							<isee:series_style color="blue" thickness="1"/>
+							<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF7F00" thickness="1"/>
+							<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF007F" thickness="1"/>
+							<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#C8C8C8" thickness="1"/>
+						</isee:series_styles>
+					</graph>
+					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				</style>
+				<stock label_side="center" x="176.667" y="335.833" width="63" height="45" name="Susceptible"/>
+				<stock label_side="center" x="173.667" y="547.5" width="63" height="45" name="Susceptible\nVaccinated"/>
+				<flow color="#00F900" font_color="#00F900" x="195.167" y="448.167" width="20" height="20" name="Being Vaccinated">
+					<pts>
+						<pt x="205.167" y="380.833"/>
+						<pt x="205.167" y="547.5"/>
+					</pts>
+				</flow>
+				<stock label_side="center" x="81.8571" y="487.881" width="54.2857" height="42.619" name="Vaccination\nFraction"/>
+				<aux background="#942192" x="47.3572" y="390.631" name="Maximum\nVaccination\nFraction"/>
+				<flow x="109" y="426.941" name="IVF">
+					<pts>
+						<pt x="109" y="366"/>
+						<pt x="109" y="487.881"/>
+					</pts>
+				</flow>
+				<connector uid="1" angle="343.496">
+					<from>Maximum_Vaccination_Fraction</from>
+					<to>IVF</to>
+				</connector>
+				<connector uid="2" angle="43.7531">
+					<from>Vaccination_Fraction</from>
+					<to>IVF</to>
+				</connector>
+				<aux background="#942192" x="58.31" y="461.631" name="PAR GAMMA"/>
+				<connector uid="3" angle="34.3864">
+					<from>PAR_GAMMA</from>
+					<to>IVF</to>
+				</connector>
+				<stock label_side="center" x="558.643" y="357.333" name="Infected"/>
+				<stock label_side="center" x="718" y="340.297" width="59" height="40" name="Recovered"/>
+				<connector uid="4" angle="5.9418">
+					<from>Vaccination_Fraction</from>
+					<to>Being_Vaccinated</to>
+				</connector>
+				<connector uid="5" color="#00F900" font_color="#00F900" isee:thickness="3" angle="351.352">
+					<from>Susceptible</from>
+					<to>Being_Vaccinated</to>
+				</connector>
+				<aux label_side="left" x="438" y="461.631" name="Lambda"/>
+				<flow x="643.572" y="357.333" name="RR">
+					<pts>
+						<pt x="581.143" y="357.333"/>
+						<pt x="718" y="357.333"/>
+					</pts>
+				</flow>
+				<aux x="647" y="452" name="IDelay"/>
+				<connector uid="8" angle="53.2463">
+					<from>IDelay</from>
+					<to>RR</to>
+				</connector>
+				<connector uid="9" angle="323.601">
+					<from>Infected</from>
+					<to>RR</to>
+				</connector>
+				<aux x="450.405" y="550.5" name="BetaZero"/>
+				<connector uid="10" angle="219.91">
+					<from>IDelay</from>
+					<to>BetaZero</to>
+				</connector>
+				<aux x="456" y="486.869" name="N"/>
+				<connector uid="13" angle="125.497">
+					<from>N</from>
+					<to>Lambda</to>
+				</connector>
+				<aux background="#942192" x="523.929" y="486.869" name="R0"/>
+				<connector uid="14" angle="220.874">
+					<from>R0</from>
+					<to>BetaZero</to>
+				</connector>
+				<connector uid="15" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="248.481">
+					<from>Infected</from>
+					<to>Lambda</to>
+				</connector>
+				<stock label_side="center" x="192.476" y="133.917" width="60.8333" height="50.8333" name="Reported\nIncidence"/>
+				<flow color="#00F900" font_color="#00F900" x="302.821" y="159.333" name="CRI">
+					<pts>
+						<pt x="364.333" y="159.333"/>
+						<pt x="253.309" y="159.333"/>
+					</pts>
+				</flow>
+				<aux x="272.309" y="78" name="Error"/>
+				<connector uid="16" color="#00F900" font_color="#00F900" isee:thickness="3" angle="338.288">
+					<from>Error</from>
+					<to>CRI</to>
+				</connector>
+				<connector uid="17" angle="85.8088">
+					<from>Reported_Incidence</from>
+					<to>Error</to>
+				</connector>
+				<aux x="356.167" y="119.333" name="AT"/>
+				<connector uid="18" angle="245.939">
+					<from>AT</from>
+					<to>CRI</to>
+				</connector>
+				<aux x="279.821" y="227.167" name="Contact Impact Effect"/>
+				<aux background="#942192" x="375.929" y="202.75" name="PAR\nALPHA"/>
+				<connector uid="19" color="#00F900" font_color="#00F900" isee:thickness="3" angle="284.324">
+					<from>Reported_Incidence</from>
+					<to>Contact_Impact_Effect</to>
+				</connector>
+				<connector uid="20" angle="171.711">
+					<from>PAR_ALPHA</from>
+					<to>Contact_Impact_Effect</to>
+				</connector>
+				<aux x="338.167" y="509.19" name="BetaT"/>
+				<connector uid="22" color="#00F900" font_color="#00F900" isee:thickness="3" angle="5.83029">
+					<from>BetaT</from>
+					<to>Lambda</to>
+				</connector>
+				<connector uid="24" angle="159.794">
+					<from>BetaZero</from>
+					<to>BetaT</to>
+				</connector>
+				<stock label_side="center" x="380" y="342.297" width="49" height="38" name="Exposed"/>
+				<flow color="#FF9300" font_color="#FF9300" x="303.834" y="360.333" name="IR">
+					<pts>
+						<pt x="239.667" y="360.333"/>
+						<pt x="380" y="360.333"/>
+					</pts>
+				</flow>
+				<connector uid="25" color="#FF9300" font_color="#FF9300" isee:thickness="3" angle="180.589">
+					<from>Lambda</from>
+					<to>IR</to>
+				</connector>
+				<connector uid="26" angle="323.875">
+					<from>Susceptible</from>
+					<to>IR</to>
+				</connector>
+				<flow background="#FF9300" x="476.572" y="358.833" name="ER">
+					<pts>
+						<pt x="429" y="358.833"/>
+						<pt x="536.143" y="358.833"/>
+					</pts>
+				</flow>
+				<connector uid="27" angle="330.684">
+					<from>Exposed</from>
+					<to>ER</to>
+				</connector>
+				<aux x="468.405" y="298" name="EDelay"/>
+				<connector uid="28" angle="251.739">
+					<from>EDelay</from>
+					<to>ER</to>
+				</connector>
+				<aux x="523.929" y="166.333" name="Detection Fraction"/>
+				<stock label_side="center" x="523.036" y="88" width="74" height="42" name="Cumulative\nDetected\nInfections"/>
+				<flow color="#00F900" font_color="#00F900" x="464.018" y="109" name="ICDI">
+					<pts>
+						<pt x="405" y="109"/>
+						<pt x="523.036" y="109"/>
+					</pts>
+				</flow>
+				<connector uid="30" angle="94.1078">
+					<from>Detection_Fraction</from>
+					<to>ICDI</to>
+				</connector>
+				<aux x="427.929" y="43" name="Incidence"/>
+				<connector uid="31" color="#00F900" font_color="#00F900" isee:thickness="3" angle="58.31">
+					<from>ER</from>
+					<to>ICDI</to>
+				</connector>
+				<connector uid="32" color="#00F900" font_color="#00F900" isee:thickness="3" angle="130.365">
+					<from>Cumulative_Detected_Infections</from>
+					<to>Incidence</to>
+				</connector>
+				<connector uid="33" color="#00F900" font_color="#00F900" isee:thickness="3" angle="173.916">
+					<from>Incidence</from>
+					<to>Error</to>
+				</connector>
+				<aux x="297.821" y="292" name="Contact Impact"/>
+				<connector uid="34" color="#00F900" font_color="#00F900" isee:thickness="3" angle="274.118">
+					<from>Contact_Impact_Effect</from>
+					<to>Contact_Impact</to>
+				</connector>
+				<connector uid="35" color="#00F900" font_color="#00F900" isee:thickness="3" angle="253.259">
+					<from>Contact_Impact</from>
+					<to>BetaT</to>
+				</connector>
+				<aux background="black" x="216.31" y="265" name="Activate B1.2\nAware Citizens"/>
+				<aux x="72.8572" y="311" name="Activate B1.1\nVaccination"/>
+				<connector uid="37" angle="259.75">
+					<from>&quot;Activate_B1.1_Vaccination&quot;</from>
+					<to>IVF</to>
+				</connector>
+				<aux x="675" y="545" name="Attack Rate"/>
+				<connector uid="38" angle="264.132">
+					<from>Recovered</from>
+					<to>Attack_Rate</to>
+				</connector>
+				<connector uid="39" angle="318.626">
+					<from>N</from>
+					<to>Attack_Rate</to>
+				</connector>
+				<connector uid="40" angle="341.673">
+					<from>&quot;Activate_B1.2_Aware_Citizens&quot;</from>
+					<to>Contact_Impact</to>
+				</connector>
+				<isee:loop_indicator color="#FF2600" font_style="italic" font_weight="bold" font_color="#FF2600" font_size="10pt" text="Contagion" orientation="clockwise" uid="41" x="415.333" y="380.297" width="73.406" height="54.3335">
+					<name>R1</name>
+					<isee:entities>
+						<item uid="15"/>
+						<item uid="25"/>
+						<entity name="Lambda"/>
+						<entity name="IR"/>
+						<entity name="Exposed"/>
+						<entity name="ER"/>
+						<entity name="Infected"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<isee:loop_indicator color="#0433FF" font_style="italic" font_weight="bold" font_color="#0433FF" font_size="10pt" text="Social Distancing" orientation="counter_clockwise" uid="42" x="358.928" y="244.75" width="70.072" height="61">
+					<name>B1</name>
+					<isee:entities>
+						<item uid="31"/>
+						<item uid="32"/>
+						<item uid="33"/>
+						<item uid="16"/>
+						<item uid="19"/>
+						<item uid="34"/>
+						<item uid="35"/>
+						<item uid="22"/>
+						<item uid="25"/>
+						<entity name="ICDI"/>
+						<entity name="Cumulative_Detected_Infections"/>
+						<entity name="Incidence"/>
+						<entity name="CRI"/>
+						<entity name="Contact_Impact_Effect"/>
+						<entity name="Contact_Impact"/>
+						<entity name="BetaT"/>
+						<entity name="IR"/>
+						<entity name="Exposed"/>
+						<entity name="ER"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<aux x="642" y="54" name="Additional Primary Care Demand"/>
+				<aux x="621" y="153.333" name="Primary Care\nDemand Multiplier"/>
+				<connector uid="44" angle="26.4588">
+					<from>Incidence</from>
+					<to>Additional_Primary_Care_Demand</to>
+				</connector>
+				<stacked_container uid="45" x="1148" y="452">
+					<graph width="350" height="250" comparative="true" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Additional_Primary_Care_Demand"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<aux x="671" y="280" name="Activate Pandemic"/>
+				<aux x="709" y="199" name="Output\nPrimary\nCare Demand"/>
+				<connector uid="47" angle="43.1452">
+					<from>Activate_Pandemic</from>
+					<to>Output_Primary_Care_Demand</to>
+				</connector>
+				<connector uid="48" angle="61.8562">
+					<from>Primary_Care_Demand_Multiplier</from>
+					<to>Additional_Primary_Care_Demand</to>
+				</connector>
+				<connector uid="49" angle="311.791">
+					<from>Additional_Primary_Care_Demand</from>
+					<to>Output_Primary_Care_Demand</to>
+				</connector>
+				<isee:loop_indicator color="#0433FF" font_style="italic" font_weight="bold" font_color="#0433FF" font_size="10pt" text="Vaccinations" orientation="clockwise" uid="50" x="210.821" y="388.547" width="66.488" height="48.62">
+					<name>B2</name>
+					<isee:entities>
+						<item uid="5"/>
+						<entity name="Susceptible"/>
+						<entity name="Being_Vaccinated"/>
+					</isee:entities>
+				</isee:loop_indicator>
+				<stacked_container uid="51" x="716.929" y="873">
+					<graph width="350" height="250" type="time_series" show_grid="false" isee:tick_type="none" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" isee:show_pie_borders="true" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name='"Activate_B1.1_Vaccination"'/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<stacked_container uid="52" x="312" y="734" width="509.179" height="245" minimized="true">
+					<table width="509.179" height="245" comparative="true">
+						<item type="time"/>
+						<item>
+							<entity name='"Activate_B1.1_Vaccination"'/>
+						</item>
+					</table>
+				</stacked_container>
+			</view>
+		</views>
+	</model>
+</xmile>
+
